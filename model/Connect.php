@@ -6,7 +6,7 @@ class Connect
      *
      * @var object
      */
-    private $pdo;
+    protected $pdo;
     private $host;
     private $user;
     private $pass;
@@ -51,15 +51,20 @@ class Connect
         }
     }
     public function  createDataBase()
-    {
-        $this->pdo = new PDO('mysql:host='.$this->host, $this->user, $this->pass);
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    {  
         $this->pdo->exec("CREATE DATABASE IF NOT EXISTS ".$this->dbase." charset=".$this->charset);
     }
     public function  connectDataBase()
     {
-        $this->pdo=new PDO('mysql:host='.$this->host.';dbname='.$this->dbase."; charset=".$this->charset, $this->user, $this->pass);
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        return $this->pdo;
+        $this->pdo = new PDO('mysql:host='.$this->host.';dbname='.$this->dbase."; charset=".$this->charset, $this->user, $this->pass);
+    }
+    public function  getDataBase()
+    {
+        $res = $this->pdo->query(
+            "SELECT * 
+            FROM `articles`"
+            );
+        //$wyn = $res->fetch(PDO::FETCH_ASSOC);
+        return $res;
     }
 }

@@ -3,7 +3,7 @@ class Master
 {
 public function show()
 {
-    echo 'jestem na leniwca :)';
+    echo 'jestem na leniwca :)<br />';
 }
 
 

@@ -4,50 +4,32 @@ require_once 'model/autoload.php';
 $len = new Master();
 $len->show();
 
-$con = new Connect();
+$con = new Install();
 
-//$con = $con->fetch(PDO::FETCH_ASSOC);
-//var_dump($con);
-$con = $con->connectDataBase();
-var_dump($con);
-//$res = $con->guery('SELECT * FROM `pref_users`');
-// $res = $res->fetch(PDO::FETCH_ASSOC);
-// var_dump($res);
+$con->__setTable('users');
+$arr_row = array(
+    'id'            => 'integer auto_increment',
+    'first_name'    =>'VARCHAR(50)',
+    'last_name'     =>'VARCHAR(50)',
+    'email'         =>'VARCHAR(50) NOT NULL UNIQUE',
+    'password'      =>'VARCHAR(50)',
+    'phone'         =>'VARCHAR(50)',
+    'country'       =>'VARCHAR(50)',
+    'post_code'     =>'VARCHAR(50)',
+    'town'          =>'VARCHAR(50)',    
+    'street'        =>'VARCHAR(50)',
+    'active'        =>'VARCHAR(50)',
+    'pref'          =>'VARCHAR(50)',
+    'create_data'   =>'DATETIME NOT NULL',
+    'update_data'   =>'DATETIME NOT NULL',
+    'facebook_id'   =>'INT',
+    'facebook_link' =>'VARCHAR(100)'
+    );
+$arr_val = array();
+$return = $con->createTableAndRows($arr_row, $arr_val);
 
-//require 'config/config.php';
-        // try {
-            
-            // $pdo=new PDO('mysql:host='.$host.';dbname='.$dbase."; charset=".$charset, $user, $pass);
-            // $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            
-            // $pdo = new PDO('mysql:host='.$host, $user, $pass);
-            // $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        // }
-        // catch(DBException $e) {
-            // echo 'The connect can not create: ' . $e->getMessage();
-        // }
-
-
-
-            //$this->pdo->exec("CREATE DATABASE IF NOT EXISTS ".$dbase." charset=".$charset);
-
-
-// $check = new PDO('mysql:host='.$host.';dbname=INFORMATION_SCHEMA; charset='.$charset, $user, $pass);
-// $dbase='szpadlic_start';
-// $wyn = $check->query(
-            // "SELECT `SCHEMA_NAME` 
-            // FROM `SCHEMATA` 
-            // WHERE `SCHEMA_NAME` = '".$dbase."'"
-            // );
-
-// $wyn = $wyn->fetch(PDO::FETCH_ASSOC);
-// echo $wyn ? 'exist' : 'not exist';
-
-//var_dump($wyn);
-
-// $wyn = $check->query(
-            // "SELECT * 
-            // FROM `SCHEMATA`"
-            // );
-//$wyn = $wyn->fetch(PDO::FETCH_ASSOC);
-//var_dump($wyn);
+//$br = $con->getDataBase();
+// foreach ($br as $bra) {
+    // //var_dump($bra);
+    // echo $bra['id'].'<br />';
+// }
