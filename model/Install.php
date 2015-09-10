@@ -29,7 +29,6 @@ class Install
             $this->user, 
             $this->pass
             );
-        $check->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $res = $check->query(
             "SELECT `SCHEMA_NAME` 
             FROM `SCHEMATA` 
@@ -54,24 +53,20 @@ class Install
 		$this->table = $this->pref.$table;
 		//echo $this->table."<br />";
 	}
-    public function checkAction($result)
-    {
-        return $result ? true : false;
-    }
     private function createDataBase()
-    {  
+    {
         $result = $this->pdo->exec(
             "CREATE DATABASE IF NOT EXISTS ".$this->dbase." 
             charset=".$this->charset
             ); // create Data Base if not exist yet
-        $this->checkAction($result);
+        return $result ? true : false;
     }
     public function deleteDataBase()
     {
 		$result = $this->pdo->exec(
-            "DROP DATABASE `".$this->dbname."`"
+            "DROP DATABASE `".$this->dbase."`"
             ); //usowanie
-		$this->checkAction($result);
+		return $result ? true : false;
 	}
     public function connectDataBase()
     {
@@ -82,22 +77,30 @@ class Install
             $this->user, 
             $this->pass
             );
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
     public function createTableAndRows($arr_row, $arr_val)
     {
         // Tworze tabele tylko raz co pozwala klikać install bez konsekwencji
-        
         $columns='';
         foreach ($arr_row as $name => $type) {
             $columns .= '`'.$name.'` '.$type.',';
         }
         //$sec = $this->pdo;
-        $this->pdo->query(
-            'CREATE TABLE IF NOT EXISTS `'.$this->table.'` (
-            '.$columns.'
-            primary key(id)
-            )ENGINE = InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1'
-            );
+        try {
+            $result = $this->pdo->query(
+                'CREATE TABLE IF NOT EXISTS `'.$this->table.'` (
+                '.$columns.'
+                primary key(id)
+                )ENGINE = InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1'
+                );
+        }
+        catch(DBException $e) {
+            echo 'The connect can not create: ' . $e->getMessage();
+        }
+            //var_dump($result);
+        //$result = $result->fetch(PDO::FETCH_ASSOC);
+        //return $result ? true : false;
         if ($arr_val != null) {
             
             $field='';
@@ -113,7 +116,7 @@ class Install
             // echo '<br />';
             // echo $value;
             // echo $wyn;
-            $this->pdo->query(
+            $result = $this->pdo->query(
                 "INSERT INTO `".$this->table."`(
                 ".$field."
                 ) VALUES (
@@ -127,6 +130,6 @@ class Install
         $result = $this->pdo->query(
             'DROP TABLE `'.$this->table.'`'
             );
-        $this->checkAction($result);
+        return $result ? true : false;
     }
 }
